@@ -61,9 +61,13 @@ Controllable text-to-audio generation aims to synthesize audio from textual desc
 If you find this work useful, please cite:
 
 ```bibtex
-@article{liu2025degdit,
-  title        = {DegDiT: Controllable Audio Generation with Dynamic Event Graph Guided Diffusion Transformer},
-  author       = {Yisu Liu and Chenxing Li and Wanqian Zhang and Wenfu Wang and Meng Yu and Ruibo Fu and Zheng Lin and Weiping Wang and Dong Yu},
-  journal      = {arXiv preprint arXiv:2508.13786},
-  year         = {2025}
+@article{liu2026degdit,
+  title={DegDiT: Controllable Audio Generation with Dynamic Event Graph Guided Diffusion Transformer},
+  author={Liu, Yisu and Li, Chenxing and Zhang, Wanqian and Wang, Wenfu and Yu, Meng and Fu, Ruibo and Lin, Zheng and Wang, Weiping and Yu, Dong},
+  journal={IEEE Transactions on Audio, Speech and Language Processing},
+  year={2026},
+  publisher={IEEE},
+  volume={34},
+  pages={1300-1311},
+  doi={10.1109/TASLPRO.2026.3663920}
 }
