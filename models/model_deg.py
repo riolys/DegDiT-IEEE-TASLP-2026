@@ -15,31 +15,31 @@ from math import pi
 import inspect
 import yaml
 
-from dsg import AudioEventGraph, parse_audio_event_description, AudioEventGraphTransformer, AudioEventGraphTransformerWithTextEncoder
+from deg import AudioEventGraph, parse_audio_event_description, AudioEventGraphTransformer, AudioEventGraphTransformerWithTextEncoder
 
 
 from model import StableAudioPositionalEmbedding, DurationEmbedder, retrieve_timesteps, TangoFlux
 
 
-class TangoFluxDSG(TangoFlux):
+class TangoFluxDEG(TangoFlux):
 
 
     def __init__(self, config, event_type_mapping=None, initialize_reference_model=False):
         super().__init__(config, initialize_reference_model=initialize_reference_model)
         
         # DSG configs
-        self.use_dsg = config.get("use_dsg", True)
-        self.dsg_max_events = config.get("dsg_max_events", 32)
-        self.dsg_n_frames = config.get("dsg_n_frames", 16)
+        self.use_deg = config.get("use_deg", True)
+        self.deg_max_events = config.get("deg_max_events", 32)
+        self.deg_n_frames = config.get("deg_n_frames", 16)
         self.use_text_encoder_for_events = config.get("use_text_encoder_for_events", False)
-        self.dsg_n_layers = config["dsg_n_layers"]
-        print("layers:", self.dsg_n_layers)
-        print("frames", self.dsg_n_frames)
+        self.deg_n_layers = config["deg_n_layers"]
+        print("layers:", self.deg_n_layers)
+        print("frames", self.deg_n_frames)
         if self.use_text_encoder_for_events:
             print("-----------use_text_encoder_for_events------------")
         self.event_type_mapping = event_type_mapping or {}
         
-        if self.use_dsg:
+        if self.use_deg:
             if self.use_text_encoder_for_events:
                 text_encoder_dim = self.text_encoder.config.d_model if hasattr(self.text_encoder.config, 'd_model') else 1024
                 
@@ -47,8 +47,8 @@ class TangoFluxDSG(TangoFlux):
                     input_embedding_dim=text_encoder_dim, 
                     hidden_dim=self.text_embedding_dim,
                     n_heads=8,
-                    n_layers=self.dsg_n_layers,
-                    n_frames=self.dsg_n_frames,
+                    n_layers=self.deg_n_layers,
+                    n_frames=self.deg_n_frames,
                     pooling_strategy="mean"
                 )
             else:
@@ -56,13 +56,13 @@ class TangoFluxDSG(TangoFlux):
                     event_vocab_size=len(self.event_type_mapping),
                     hidden_dim=self.text_embedding_dim,
                     n_heads=8,
-                    n_layers=self.dsg_n_layers,
-                    n_frames=self.dsg_n_frames
+                    n_layers=self.deg_n_layers,
+                    n_frames=self.deg_n_frames
                 )
     
     def encode_event_graph(self, event_description, duration=10.0):
 
-        if not self.use_dsg:
+        if not self.use_deg:
             return None, None
         
         device = next(self.parameters()).device
@@ -105,19 +105,19 @@ class TangoFluxDSG(TangoFlux):
                 graphs,
                 text_encoder=self.text_encoder,
                 tokenizer=self.tokenizer,
-                max_events=self.dsg_max_events
+                max_events=self.deg_max_events
             )
         else:
             graph_embeddings, graph_mask = self.graph_transformer(
                 graphs, 
                 self.event_type_mapping,
-                max_events=self.dsg_max_events
+                max_events=self.deg_max_events
             )
         
         return graph_embeddings, graph_mask
     
     @torch.no_grad()
-    def inference_flow_with_dsg(
+    def inference_flow_with_deg(
         self,
         prompt,
         event_description=None,
@@ -152,7 +152,7 @@ class TangoFluxDSG(TangoFlux):
             
         graph_embeddings = None
         graph_mask = None
-        if event_description is not None and self.use_dsg:
+        if event_description is not None and self.use_deg:
             graph_embeddings, graph_mask = self.encode_event_graph(event_description, duration[0].item())
             
             if classifier_free_guidance and graph_embeddings is not None:
@@ -270,7 +270,7 @@ class TangoFluxDSG(TangoFlux):
 
         graph_embeddings = None
         graph_mask = None
-        if event_description is not None and self.use_dsg:
+        if event_description is not None and self.use_deg:
             graph_embeddings, graph_mask = self.encode_event_graph(event_description, duration[0].item())
  
         mask_expanded = boolean_encoder_mask.unsqueeze(-1).expand_as(encoder_hidden_states)
