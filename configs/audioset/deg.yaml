@@ -32,7 +32,7 @@ model:
   uncondition: false
   text_encoder_name: "t5/flan-t5-large"
   
-  use_dsg: true
+  use_deg: true
   dsg_max_events: 32
   dsg_n_frames: 16
   dsg_n_layers: 4 
