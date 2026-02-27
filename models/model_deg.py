@@ -27,7 +27,7 @@ class TangoFluxDEG(TangoFlux):
     def __init__(self, config, event_type_mapping=None, initialize_reference_model=False):
         super().__init__(config, initialize_reference_model=initialize_reference_model)
         
-        # DSG configs
+        # DEG configs
         self.use_deg = config.get("use_deg", True)
         self.deg_max_events = config.get("deg_max_events", 32)
         self.deg_n_frames = config.get("deg_n_frames", 16)
